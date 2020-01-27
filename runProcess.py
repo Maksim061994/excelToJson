@@ -10,7 +10,7 @@ def main(pathLoadExcel, pathSaveJson):
 			- pathLoadExcel - путь, где сохранённ Excel файл
 			- pathSaveJson - куда необходимо сохранить json
 	"""
-	path, extension  = pathLoadExcel.rsplit('.',1)
+	path, _  = pathLoadExcel.rsplit('.',1)
 	if pathSaveJson is None:
 		pathSaveJson = path + ".json"
 	# Проверка на существование файла

@@ -41,13 +41,18 @@ class ProcessorExcelToJson:
                 df[col] = df[col].dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
                 continue
             if is_numeric_dtype(df[col]):
+                # df[col] = df[col].astype('Int32')   
                 if col == "FINAL_GUILTY_FIRM":
                     df[col] = df[col].fillna(0).astype(int).replace(0, None)
                 continue
             df[col] = df[col].astype(str)
         if "Unnamed: 0" in df.columns:
             del df["Unnamed: 0"]
-        return df.replace("nan", "")
+        try:
+            df = df.replace("nan", "")
+        except Exception as e:
+            print("Error with replace nan :", e)
+        return df
     
     def procOneFile(self, sheet):
         """
@@ -102,6 +107,11 @@ class ProcessorExcelToJson:
                 if val not in item.keys():
                     continue
                 item[val] = json.loads(item[val])
+            for key, value in item.items():
+                if type(value) == float:
+                    # Обработка float. Нетрализация не нужных преобрзований во float. Пример: если  2.0 - 2 == 0 --> преобразуем в int
+                    if value - int(value) == 0:
+                        item[key] = int(value)
         return items
 
     def runProcess(self):
@@ -112,8 +122,8 @@ class ProcessorExcelToJson:
         # Обработка внутренних JSON-ов актах
         print("Провожу последние преобразования")
         for key, items in dictData.items():
-            if "acts" not in key:
-                continue
+            # if "acts" not in key:
+            #     continue
             items = self.actsAddProcessJson(items)
             dictData[key] = items
         # Сохранение JSON-а
