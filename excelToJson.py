@@ -38,7 +38,7 @@ class ProcessorExcelToJson:
         for col in df.columns:
             # Если тип колонок DateTime - преобразуем в строку
             if is_datetime64_dtype(df[col]):
-                df[col] = df[col].dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+                df[col] = df[col].dt.strftime("%Y-%m-%dT%H:%M:%S")
                 continue
             if is_numeric_dtype(df[col]):
                 # df[col] = df[col].astype('Int32')   
